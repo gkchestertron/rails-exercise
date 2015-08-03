@@ -1,12 +1,12 @@
 class Stat < Sequel::Model
-  def self.mysql_datestamp(days_ago)
-    day = Time.now - days_ago.days
+  def self.mysql_datestamp(day_diff)
+    day = Time.now + day_diff.days
     day.strftime("%Y-%m-%d")
   end
 
-  def self.mysql_timestamp(days_ago = 0)
-    day = Time.now - days_ago.days
-    if days_ago
+  def self.mysql_timestamp(day_diff = 0)
+    day = Time.now + day_diff.days
+    if day_diff
       day.strftime("%Y-%m-%d 00:00:00")
     else
       day.strftime("%Y-%m-%d %H:%M:%S")

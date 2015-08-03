@@ -50,4 +50,4 @@ end
 
 end_time = Time.now
 diff = end_time - start_time
-puts diff
+puts "seed completed in: #{diff} seconds"

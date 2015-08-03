@@ -1,28 +1,8 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+The steps to spin up this rails example are as follows:
+1. bundle install
+2. setup a mysql server and edit the database.yml to reflect your settings
+3. create, migrate and seed the database - the seed should take a little less than 2 minutes.
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+The seed data can be recreated at any time by dropping, creating, migrating and seeding the db via rake.

@@ -1,51 +1,69 @@
 class StatController < ApplicationController
   def top_urls
-    results = {}
-    (0..4).reverse_each do |i|
-      day = Stat.mysql_datestamp(i)
-      day_start = "#{day} 00:00:00"
-      day_end   = "#{day} 23:59:59"
-      result    = Stat.with_sql("select url, count(url) as visits from stats where created_at >= \'#{day_start}\' and created_at <= \'#{day_end}\' group by url order by visits desc")
-      results[day] = result.all
-    end
+    day_start = Stat.mysql_datestamp(-5)
+    day_end   = Stat.mysql_datestamp(0)
 
-    render json: results
+    result    = Stat.with_sql(<<-sql
+      select 
+        date(created_at) as c_date, url, count(url) as visits 
+      from 
+        stats 
+      where 
+        date(created_at) >= \'#{day_start}\' and date(created_at) <= \'#{day_end}\' 
+      group by c_date, url 
+      order by visits desc
+      sql
+    )
+
+    render json: self.nested_result(result.all, false)
   end
 
   def top_referrers
-    results = {}
-    (0..4).reverse_each do |i|
-      day = Stat.mysql_datestamp(i)
-      day_start = "#{day} 00:00:00"
-      day_end   = "#{day} 23:59:59"
-      result    = Stat.with_sql(<<-sql
-        select 
-          s.url, sub.visits, referrer, count(referrer) as refer_visits 
-        from 
-          (select url, count(url) as visits from stats  group by url order by count(url) desc limit 10) sub         
-        join                         
-          stats s on sub.url=s.url 
-        where 
-          created_at >= '#{day_start}' and created_at <= '#{day_end}' 
-        group by 
-          s.url, s.referrer;
-      sql
-      )
+    day_start = Stat.mysql_datestamp(-5)
+    day_end   = Stat.mysql_datestamp(0)
+    result    = Stat.with_sql(<<-sql
+      select 
+        date(s.created_at) as c_date, s.url, sub.visits, referrer, count(referrer) as refer_visits 
+      from 
+        (select url, count(url) as visits from stats  group by url order by count(url) desc limit 10) sub         
+      join                         
+        stats s on sub.url=s.url 
+      where 
+        date(created_at) >= '#{day_start}' and created_at <= '#{day_end}' 
+      group by 
+        c_date, s.url, s.referrer
+      order by c_date desc;
+    sql
+    )
 
-      nested_result = {}
-      rows = result.all
+    render json: self.nested_result(result.all, true)
+  end
 
-      rows.each do |row|
-        unless nested_result[row.url]
-          nested_result[row.url] = { :visits => row[:visits], :referrers => [] }
-        end
-        parent_row = nested_result[row.url]
-        nested_result[row.url][:referrers].push({ url: row.referrer, visits: row[:refer_visits] })
+  def nested_result(rows, referrers=false)
+    p rows
+    nested_result = {}
+
+    rows.each do |row|
+      next if referrers and row[:referrer] == nil
+
+      unless nested_result[row[:c_date]] 
+        nested_result[row[:c_date]] = []
       end
 
-      results[day] = nested_result
+      unless nested_result[row[:c_date]].any?{|nested_row| nested_row[:url] == row[:url]}
+        if row[:referrer]
+          nested_result[row[:c_date]].push({ :url => row[:url], :visits => row[:visits], :referrers => [] })
+        else
+          nested_result[row[:c_date]].push({ :url => row[:url], :visits => row[:visits] })
+        end
+      end
+
+      if row[:referrer]
+        parent_row = nested_result[row[:c_date]].find{|nested_row| nested_row[:url] == row[:url]}
+        parent_row[:referrers].push({ url: row.referrer, visits: row[:refer_visits] })
+      end
     end
 
-    render json: results
+    nested_result
   end
 end
