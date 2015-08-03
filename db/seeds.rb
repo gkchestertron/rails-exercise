@@ -6,7 +6,16 @@ urls = [
   'https://www.apple.com',
   'http://developer.apple.com',
   'http://en.wikipedia.org',
-  'http://opensource.org'
+  'http://opensource.org',
+  'http://copypastecharacter.com', 
+  'http://codeacademy.com', 
+  'http://lovelycharts.com', 
+  'http://iconfinder.com', 
+  'http://office.com', 
+  'http://followupthen.com', 
+  'http://jotti.org', 
+  'http://wolframalpha.com', 
+  'http://printwhatyoulike.com'
 ]
 
 referrers = [
@@ -14,7 +23,16 @@ referrers = [
   'https://apple.com',
   'https://www.apple.com',
   'http://developer.apple.com',
-  nil,
+  'http://copypastecharacter.com', 
+  'http://codeacademy.com', 
+  'http://lovelycharts.com', 
+  'http://iconfinder.com', 
+  'http://office.com', 
+  'http://followupthen.com', 
+  'http://jotti.org', 
+  'http://wolframalpha.com', 
+  'http://printwhatyoulike.com',
+  nil
 ]
 
 Sequel.transaction([]) do

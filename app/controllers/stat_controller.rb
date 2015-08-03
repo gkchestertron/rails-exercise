@@ -5,7 +5,7 @@ class StatController < ApplicationController
       day = Stat.mysql_datestamp(i)
       day_start = "#{day} 00:00:00"
       day_end   = "#{day} 23:59:59"
-      result    = Stat.with_sql("select url, count(url) as visit from stats where created_at >= \'#{day_start}\' and created_at <= \'#{day_end}\' group by url order by visit desc")
+      result    = Stat.with_sql("select url, count(url) as visits from stats where created_at >= \'#{day_start}\' and created_at <= \'#{day_end}\' group by url order by visits desc")
       results[day] = result.all
     end
 
@@ -13,6 +13,15 @@ class StatController < ApplicationController
   end
 
   def top_referrers
-    render json: Stat.last()
+    results = {}
+    (0..4).reverse_each do |i|
+      day = Stat.mysql_datestamp(i)
+      day_start = "#{day} 00:00:00"
+      day_end   = "#{day} 23:59:59"
+      result    = Stat.with_sql("select url, count(url) as visits from stats where created_at >= \'#{day_start}\' and created_at <= \'#{day_end}\' group by url order by visits desc")
+      results[day] = result.all
+    end
+
+    render json: results
   end
 end
