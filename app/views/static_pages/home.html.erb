@@ -1,0 +1,40 @@
+<div ng-controller="urlsController">
+  <h1>Top URLs</h1>
+  <div ng-repeat="(date, obj) in urls">
+    <h2>{{date}}</h2>
+    <table>
+      <thead>
+        <th>URL</th>
+        <th>Vists</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="url in obj">
+          <td>{{ url.url }}</td>
+          <td>{{ url.visits }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div ng-controller="referrersController">
+  <h1>Top Referrers</h1>
+  <div ng-repeat="(date, objs) in referrers">
+    <h2>{{date}}</h2>
+    <div ng-repeat="obj in objs">
+      <h3>{{obj.url}} - {{obj.visits}} visits</h2>
+      <table>
+        <thead>
+          <th>visits</th>
+          <th>referrers</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="referrer in obj.referrers">
+            <td>{{ referrer.url }}</td>
+            <td>{{ referrer.visits }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -11,7 +11,7 @@ class StatController < ApplicationController
       where 
         date(created_at) >= \'#{day_start}\' and date(created_at) <= \'#{day_end}\' 
       group by c_date, url 
-      order by visits desc
+      order by c_date desc, visits desc
       sql
     )
 
